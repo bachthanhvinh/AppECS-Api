@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    // --- 1. Thư mục In/Out ---
+    "rootDir": "./src",
+    "outDir": "./build",
+
+    // --- 2. Môi trường & Module ---
+    "target": "ES2022",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "types": ["node"],
+
+    // --- 3. Khả năng tương thích ---
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // --- 4. Các tùy chọn Output ---
+    "sourceMap": true,
+
+    // --- 5. Kiểm tra kiểu dữ liệu (Strict Mode) ---
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build", "**/*.test.ts"]
+}
