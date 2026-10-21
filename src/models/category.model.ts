@@ -1,5 +1,6 @@
 import { pool } from "../providers/db";
 import { DBCategoriesRow } from "../types/categories";
+import { findOneByField } from "../utils/dbhelper";
 
 interface CreateCategoryParams {
   name: string;
@@ -13,19 +14,11 @@ interface UpdateCategoryParams {
   description?: string;
 }
 
-const findBySlug = async (slug: string): Promise<DBCategoriesRow | null> => {
-  const query = `SELECT * FROM categories WHERE slug = $1 LIMIT 1;`;
-  const result = await pool.query<DBCategoriesRow>(query, [slug]);
-  return result.rows[0] || null;
-};
+// const findBySlug = async (slug: string) =>
+//   findOneByField<DBCategoriesRow>("categories", "id", slug);
 
-const findById = async (
-  categoryId: string,
-): Promise<DBCategoriesRow | null> => {
-  const query = `SELECT * FROM categories WHERE id = $1 LIMIT 1;`;
-  const result = await pool.query<DBCategoriesRow>(query, [categoryId]);
-  return result.rows[0] ?? null;
-};
+// const findById = async (categoryId: string) =>
+//   findOneByField<DBCategoriesRow>("categories", "id", categoryId);
 
 const createCategory = async ({
   name,
@@ -92,8 +85,6 @@ const deleteCategory = async (categoryDelete: string) => {
   return result.rows[0];
 };
 export const categoryModel = {
-  findById,
-  findBySlug,
   createCategory,
   updateCategory,
   getCategorys,

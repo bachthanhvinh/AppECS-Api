@@ -36,8 +36,21 @@ const CreateUser = async (
   return result.rows[0] as User;
 };
 
+const getUsers = async (): Promise<User[]> => {
+  const query = `
+       SELECT id, email, role, created_at FROM users;
+     `;
+  const result = await pool.query<DBUserRow>(query);
+
+  return result.rows;
+};
+
+
+
+
 export const userModel = {
   findUserByEmail,
-  CreateUser,
+  CreateUser, 
   findUserByEmailWithPassword,
+  getUsers,
 };

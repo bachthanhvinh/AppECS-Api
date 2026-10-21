@@ -1,6 +1,7 @@
 import { categoryModel } from "../models/category.model";
 import { DBCategoriesRow } from "../types/categories";
 import ApiError from "../utils/apiError";
+import { findById, findBySlug } from "../utils/dbhelper";
 
 interface createCategoryDTO {
   name: string;
@@ -18,7 +19,10 @@ const createCategory = async (
 ): Promise<DBCategoriesRow> => {
   const { name, slug, description } = payload;
 
-  const existingCategory = await categoryModel.findBySlug(slug);
+  const existingCategory = await findBySlug<DBCategoriesRow>(
+    "categories",
+    slug,
+  );
   if (existingCategory) {
     throw new ApiError(409, "Category slug already exists");
   }
@@ -34,14 +38,17 @@ const updateCategory = async (
   categoryId: string,
   payload: updateCategoryDTO,
 ): Promise<DBCategoriesRow | null> => {
-  const category = await categoryModel.findById(categoryId);
+  const category = await findById<DBCategoriesRow>("categories", categoryId);
 
   if (!category) {
     throw new ApiError(404, "Category not found");
   }
 
   if (payload.slug && payload.slug !== category.slug) {
-    const existingSlug = await categoryModel.findBySlug(payload.slug);
+    const existingSlug = await findBySlug<DBCategoriesRow>(
+      "categories",
+      payload.slug,
+    );
     if (existingSlug) {
       throw new ApiError(409, "Category slug already exists");
     }
@@ -65,11 +72,11 @@ const getCategorys = async () => {
 };
 
 const getCategoryId = async (categoryId: string) => {
-  return await categoryModel.findById(categoryId);
+  return await findById<DBCategoriesRow>("categories", categoryId);
 };
 
 const deleteCategory = async (categoryId: string) => {
-  const category = await categoryModel.findById(categoryId);
+  const category = await findById<DBCategoriesRow>("categories", categoryId);
   const checkCategoryDelete = categoryId === category?.id;
   if (!checkCategoryDelete) {
     throw new ApiError(400, "not found");

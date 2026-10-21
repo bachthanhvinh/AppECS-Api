@@ -7,18 +7,18 @@ import { categoryValidation } from "../../validations/category.validation";
 
 const Router = express.Router();
 
+Router.route("/").get(categoryController.getCategorys);
+Router.route("/:categoryId").get(categoryController.getCategoryId);
+
 Router.use(authMiddleware.authenticate);
 Router.use(adminMiddleware.authorizationAdmin);
 
-Router.route("/")
-  .get(categoryController.getCategorys)
-  .post(
-    validate(categoryValidation.createCategorySchema),
-    categoryController.createCategory,
-  );
+Router.route("/").post(
+  validate(categoryValidation.createCategorySchema),
+  categoryController.createCategory,
+);
 
 Router.route("/:categoryId")
-  .get(categoryController.getCategoryId)
   .put(
     validate(categoryValidation.updateCategorySchema),
     categoryController.updateCategory,

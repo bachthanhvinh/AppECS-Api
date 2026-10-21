@@ -1,5 +1,6 @@
 import { userModel } from "../models/user.model";
 import { JwtProvider } from "../providers/Jwt.provider";
+import { DBUserRow } from "../types/user";
 import ApiError from "../utils/apiError";
 import bcrypt from "bcryptjs";
 
@@ -57,7 +58,12 @@ const login = async (
   return { accessToken };
 };
 
+const getUsers = async (): Promise<DBUserRow[]> => {
+  return await userModel.getUsers();
+};
+
 export const userServices = {
   registerNew,
   login,
+  getUsers,
 };
