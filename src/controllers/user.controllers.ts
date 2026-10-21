@@ -32,7 +32,20 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getUsers = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await userServices.getUsers();
+    res.status(200).json({
+      success: true,
+      message: "getUser Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const userController = {
   registerNew,
   login,
+  getUsers,
 };
