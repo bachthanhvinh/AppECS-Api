@@ -1,3 +1,4 @@
+import { env } from "../config/env";
 import { userModel } from "../models/user.model";
 import { JwtProvider } from "../providers/Jwt.provider";
 import { DBUserRow } from "../types/user";
@@ -33,7 +34,7 @@ const registerNew = async (
 const login = async (
   email: string,
   password: string,
-): Promise<{ accessToken: string }> => {
+): Promise<{ accessToken: string; refreshToken: string }> => {
   if (!email || !password) {
     throw new ApiError(400, "email and password are require!");
   }
@@ -49,13 +50,20 @@ const login = async (
     throw new ApiError(400, "password not correct");
   }
 
-  const accessToken = JwtProvider.signAccessToken({
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-  });
+  const userInfo = { userId: user.id, email: user.email, role: user.role };
 
-  return { accessToken };
+  const accessToken = JwtProvider.generateToken(
+    userInfo,
+    env.jwtAccessSecret,
+    env.jwtAccessExpiresIn,
+  );
+  const refreshToken = JwtProvider.generateToken(
+    userInfo,
+    env.jwtRefreshSecret,
+    env.jwtRefreshExpiresIn,
+  );
+
+  return { accessToken, refreshToken };
 };
 
 const getUsers = async (): Promise<DBUserRow[]> => {
