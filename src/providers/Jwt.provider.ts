@@ -1,24 +1,26 @@
 import jwt, { SignOptions } from "jsonwebtoken";
-import { TokenPayload } from "../types/user";
-import { env } from "../config/env";
 import ApiError from "../utils/apiError";
 
-const signAccessToken = (payload: TokenPayload): string => {
-  const options: SignOptions = {
-    expiresIn: env.jwtAccessExpiresIn as SignOptions["expiresIn"],
-  };
-  return jwt.sign(payload, env.jwtAccessSecret, options);
-};
-
-const verifyAccessToken = (token: string): TokenPayload => {
+const generateToken = (
+  payload: object,
+  secretSignature: string,
+  tokenLife: string | number,
+): string => {
   try {
-    return jwt.verify(token, env.jwtAccessSecret) as TokenPayload;
-  } catch {
-    throw new ApiError(401, "Invalid or expired access token");
+    return jwt.sign(payload, secretSignature, {
+      algorithm: "HS256",
+      expiresIn: tokenLife as SignOptions["expiresIn"],
+    });
+  } catch (error) {
+    throw new Error(`Error generating token: ${(error as Error).message}`);
   }
 };
 
+const verifyToken = <T>(token: string, secretSignature: string): T => {
+  return jwt.verify(token, secretSignature) as T;
+};
+
 export const JwtProvider = {
-  signAccessToken,
-  verifyAccessToken,
+  generateToken,
+  verifyToken,
 };
