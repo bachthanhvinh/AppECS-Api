@@ -3,15 +3,10 @@ import { userController } from "../../controllers/user.controllers";
 import { authMiddleware } from "../../middlewares/authMiddleware";
 import { adminMiddleware } from "../../middlewares/adminMiddleware";
 
-export const Router = express.Router();
+export const router = express.Router();
 
-Router.route("/register").post(userController.registerNew);
+router.use(authMiddleware.authenticate, adminMiddleware.authorizationAdmin);
 
-Router.route("/login").post(userController.login);
+router.route("/").get(userController.getUsers);
 
-Router.use(authMiddleware.authenticate);
-Router.use(adminMiddleware.authorizationAdmin);
-
-Router.route("/").get(userController.getUsers);
-
-export const userRouter = Router;
+export const userRouter = router;

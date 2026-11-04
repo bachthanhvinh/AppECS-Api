@@ -47,17 +47,17 @@ const updateCategory = async ({
   const query = `
    UPDATE categories
    SET
-   name = COALESCE($1, name),
-   slug = COALESCE($2, slug),
-   description = COALESCE($3, description),
+   name = $1, 
+   slug = $2,
+   description = $3,
    updated_at = NOW()
    WHERE id = $4
    RETURNING *;
    `;
   const result = await pool.query<DBCategoriesRow>(query, [
-    name ?? null,
-    slug ?? null,
-    description ?? null,
+    name,
+    slug,
+    description,
     categoryId,
   ]);
 

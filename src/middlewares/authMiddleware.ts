@@ -29,7 +29,7 @@ const authenticate = (
     next();
   } catch (error) {
     if (error instanceof Error && error?.message?.includes("jwt expired")) {
-      next(new ApiError(StatusCodes.GONE, "Need to refresh token."));
+      next(new ApiError(StatusCodes.UNAUTHORIZED, "Need to refresh token ."));
       return;
     }
     next(new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized!"));

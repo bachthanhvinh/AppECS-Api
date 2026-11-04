@@ -6,6 +6,7 @@ import { logger } from "./providers/logger";
 import { API_V1 } from "./routes/v1";
 import { corsOptions } from "./config/cors";
 import cookieParser from "cookie-parser";
+import "./providers/cloudinary";
 
 const app = express();
 
