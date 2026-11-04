@@ -5,23 +5,27 @@ import { adminMiddleware } from "../../middlewares/adminMiddleware";
 import { validate } from "../../middlewares/validation.middleware";
 import { articleValidation } from "../../validations/article.validation";
 
-const Router = express.Router();
+const router = express.Router();
 
-Router.route("/").get(articleController.getArticles);
-Router.route("/:articleId").get(articleController.getArticleId);
+router.route("/").get(articleController.getArticles);
+router.route("/:articleId").get(articleController.getArticleId);
 
-Router.use(authMiddleware.authenticate);
-Router.use(adminMiddleware.authorizationAdmin);
+router.use(authMiddleware.authenticate);
+router.use(adminMiddleware.authorizationAdmin);
 
-Router.route("/").post(
-  validate(articleValidation.createArticleSchema),
-  articleController.createArticle,
-);
-Router.route("/:articleId")
+router
+  .route("/")
+  .post(
+    validate(articleValidation.createArticleSchema),
+    articleController.createArticle,
+  );
+router
+  .route("/:articleId")
   .put(
     validate(articleValidation.updateArticleSchema),
     articleController.updateArticle,
   )
   .delete(articleController.deleteArticle);
 
-export const articlesRouter = Router;
+
+export const articlesRouter = router;

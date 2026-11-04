@@ -7,11 +7,6 @@ const createArticleSchema = z.object({
       .min(1, "Tiêu đề không được để trống")
       .max(255, "Tiêu đề tối đa 255 ký tự"),
 
-    slug: z
-      .string()
-      .min(1, "Slug không được để trống")
-      .max(255, "Slug tối đa 255 ký tự")
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug không hợp lệ"),
 
     description: z.string().min(1, "Mô tả không được để trống"),
 

@@ -22,4 +22,7 @@ export const env = {
   jwtAccessExpiresIn: checkRequiredEnvVariables("ACCESS_TOKEN_LIFE"),
   jwtRefreshSecret: checkRequiredEnvVariables("REFRESH_TOKEN_SECRET_SIGNATURE"),
   jwtRefreshExpiresIn: checkRequiredEnvVariables("REFRESH_TOKEN_LIFE"),
+  cloudinaryCloudName: checkRequiredEnvVariables("CLOUDINARY_CLOUD_NAME"),
+  cloudinaryApiKey: checkRequiredEnvVariables("CLOUDINARY_API_KEY"),
+  cloudinaryApiSecret: checkRequiredEnvVariables("CLOUDINARY_API_SECRET")
 } as const;

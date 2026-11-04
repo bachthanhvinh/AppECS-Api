@@ -16,6 +16,7 @@ const createCategorySchema = z.object({
       .string()
       .trim()
       .max(1000, "Description must be under 1000 characters")
+      .nullable()
       .optional(),
   }),
 });

@@ -5,24 +5,24 @@ import { categoryController } from "../../controllers/category.controllers";
 import { validate } from "../../middlewares/validation.middleware";
 import { categoryValidation } from "../../validations/category.validation";
 
-const Router = express.Router();
+const router = express.Router();
 
-Router.route("/").get(categoryController.getCategorys);
-Router.route("/:categoryId").get(categoryController.getCategoryId);
+router.route("/").get(categoryController.getCategorys);
+router.route("/:categoryId").get(categoryController.getCategoryId);
 
-Router.use(authMiddleware.authenticate);
-Router.use(adminMiddleware.authorizationAdmin);
+router.use(authMiddleware.authenticate);
+router.use(adminMiddleware.authorizationAdmin);
 
-Router.route("/").post(
+router.route("/").post(
   validate(categoryValidation.createCategorySchema),
   categoryController.createCategory,
 );
 
-Router.route("/:categoryId")
+router.route("/:categoryId")
   .put(
     validate(categoryValidation.updateCategorySchema),
     categoryController.updateCategory,
   )
   .delete(categoryController.deleteCategory);
 
-export const categoriesRouter = Router;
+export const categoriesRouter = router;

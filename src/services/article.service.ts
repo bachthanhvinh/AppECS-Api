@@ -3,18 +3,18 @@ import { DBArticlesRow } from "../types/articles";
 import { DBCategoriesRow } from "../types/categories";
 import ApiError from "../utils/apiError";
 import { findById, findBySlug } from "../utils/dbhelper";
+import { slugify } from "../utils/formatters";
 
 export interface CreateArticleDTO {
   title: string;
-  slug: string;
   description: string;
   content: string;
   thumbnail_url?: string | null;
   category_id: string;
 }
+
 export interface UpdateArticleDTO {
   title?: string | null;
-  slug?: string | null;
   description?: string | null;
   content?: string | null;
   thumbnail_url?: string | null;
@@ -31,13 +31,20 @@ const createArticle = async (
   );
   if (!categoryExists) throw new ApiError(404, "Category không tồn tại");
 
-  const slugExists = await findBySlug<DBArticlesRow>("articles", reqBody.slug);
-  if (slugExists)
-    throw new ApiError(409, "Slug bài viết đã tồn tại, vui lòng đổi slug khác");
+  const autoSlug = slugify(reqBody.title);
+
+  const slugExists = await findBySlug<DBArticlesRow>("articles", autoSlug);
+  if (slugExists) {
+    throw new ApiError(
+      409,
+      "Tiêu đề bài viết này đã tạo ra slug bị trùng, vui lòng đổi tiêu đề khác",
+    );
+  }
 
   return await articleModel.createArticle({
     ...reqBody,
     author_id: userId,
+    slug: autoSlug,
   });
 };
 
@@ -58,31 +65,39 @@ const updateArticle = async (
   const article = await findById<DBArticlesRow>("articles", articleId);
   if (!article) throw new ApiError(404, "Article not found");
 
-  if (payload.slug && payload.slug !== article.slug) {
-    const existingSlug = await findBySlug<DBArticlesRow>(
-      "articles",
-      payload.slug,
-    );
-    if (existingSlug) throw new ApiError(409, "Slug bài viết đã tồn tại");
+  let newSlug = article.slug;
+
+  if (payload.title && payload.title !== article.title) {
+    newSlug = slugify(payload.title);
+
+    const existingSlug = await findBySlug<DBArticlesRow>("articles", newSlug);
+    if (existingSlug && existingSlug.id !== articleId) {
+      throw new ApiError(
+        409,
+        "Tiêu đề mới tạo ra slug đã tồn tại ở bài viết khác, vui lòng chọn tiêu đề khác",
+      );
+    }
   }
 
   const updatedArticle = await articleModel.updateArticle({
-    articleId,
     ...payload,
+    articleId,
+    slug: newSlug,
   });
+
   if (!updatedArticle) throw new ApiError(400, "Update article failed");
 
   return updatedArticle;
 };
 
 const deleteArticle = async (articleId: string) => {
-  const findArticleId = await findById<DBArticlesRow>("articles", articleId);
-  const checkCategoryDelete = articleId === findArticleId?.id;
-  if (!checkCategoryDelete) {
-    throw new ApiError(400, "not found");
+  const article = await findById<DBArticlesRow>("articles", articleId);
+  if (!article) {
+    throw new ApiError(404, "Bài viết không tồn tại");
   }
   return await articleModel.deleteArticle(articleId);
 };
+
 export const articleService = {
   createArticle,
   getArticles,

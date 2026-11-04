@@ -42,7 +42,13 @@ const createArticle = async (
 };
 
 const getArticles = async (): Promise<DBArticlesRow[]> => {
-  const query = `SELECT * FROM articles ORDER BY updated_at DESC;`;
+  const query = `
+  SELECT 
+    a.*, 
+    c.name AS category_name 
+  FROM articles a
+  LEFT JOIN categories c ON a.category_id = c.id
+  ORDER BY a.updated_at DESC;`;
   const result = await pool.query<DBArticlesRow>(query);
   return result.rows;
 };

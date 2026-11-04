@@ -7,6 +7,7 @@ export type DBArticlesRow = {
   thumbnail_url: string | null;
   category_id: string;
   author_id: string;
+  category_name: string;
   is_published: boolean;
   published_at: Date | null;
   created_at: Date;
