@@ -17,8 +17,18 @@ export interface UpdateArticleParams {
   description?: string | null;
   content?: string | null;
   thumbnail_url?: string | null;
+  category_id?: string | null;
   is_published?: boolean | null;
 }
+const UPDATABLE_COLUMNS = [
+  "title",
+  "slug",
+  "description",
+  "content",
+  "thumbnail_url",
+  "category_id",
+  "is_published",
+] as const;
 
 const createArticle = async (
   params: CreateArticleParams,
@@ -53,30 +63,32 @@ const getArticles = async (): Promise<DBArticlesRow[]> => {
   return result.rows;
 };
 
+
 const updateArticle = async (
   params: UpdateArticleParams,
 ): Promise<DBArticlesRow | null> => {
-  const { articleId, ...fields } = params;
-
-  const updateFields = Object.entries(fields).filter(
-    ([_, val]) => val !== undefined,
-  );
+  const updateFields = UPDATABLE_COLUMNS.filter(
+    (col) => params[col] !== undefined,
+  ).map((col) => [col, params[col]] as const);
 
   if (updateFields.length === 0) return null;
 
   const setString = updateFields
-    .map(([key, _], index) => `${key} = $${index + 1}`)
+    .map(([key], index) => `${key} = $${index + 1}`)
     .join(", ");
-  const values = updateFields.map(([_, val]) => val);
+  const values = updateFields.map(([, val]) => val);
 
   const query = `
-      UPDATE articles
-      SET ${setString}, updated_at = NOW()
-      WHERE id = $${values.length + 1}
-      RETURNING *;
-    `;
+    UPDATE articles
+    SET ${setString}, updated_at = NOW()
+    WHERE id = $${values.length + 1}
+    RETURNING *;
+  `;
 
-  const result = await pool.query<DBArticlesRow>(query, [...values, articleId]);
+  const result = await pool.query<DBArticlesRow>(query, [
+    ...values,
+    params.articleId,
+  ]);
   return result.rows[0] ?? null;
 };
 

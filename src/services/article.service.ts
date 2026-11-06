@@ -2,6 +2,10 @@ import { articleModel } from "../models/article.model";
 import { DBArticlesRow } from "../types/articles";
 import { DBCategoriesRow } from "../types/categories";
 import ApiError from "../utils/apiError";
+import {
+  deleteCloudinaryImages,
+  extractPublicIds,
+} from "../utils/cloudinaryImages";
 import { findById, findBySlug } from "../utils/dbhelper";
 import { slugify } from "../utils/formatters";
 
@@ -87,15 +91,32 @@ const updateArticle = async (
 
   if (!updatedArticle) throw new ApiError(400, "Update article failed");
 
+  const oldIds = extractPublicIds(article.content, article.thumbnail_url);
+  const newIds = extractPublicIds(
+    updatedArticle.content,
+    updatedArticle.thumbnail_url,
+  );
+  const removed = [...oldIds].filter((id) => !newIds.has(id));
+
+  await deleteCloudinaryImages(removed);
+
   return updatedArticle;
 };
+
 
 const deleteArticle = async (articleId: string) => {
   const article = await findById<DBArticlesRow>("articles", articleId);
   if (!article) {
     throw new ApiError(404, "Bài viết không tồn tại");
   }
-  return await articleModel.deleteArticle(articleId);
+
+  const deleted = await articleModel.deleteArticle(articleId);
+
+  await deleteCloudinaryImages([
+    ...extractPublicIds(article.content, article.thumbnail_url),
+  ]);
+
+  return deleted;
 };
 
 export const articleService = {
