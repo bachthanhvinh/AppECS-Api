@@ -84,9 +84,11 @@ const deleteCategory = async (categoryDelete: string) => {
 
   return result.rows[0];
 };
+
+
 export const categoryModel = {
   createCategory,
   updateCategory,
   getCategorys,
-  deleteCategory,
+  deleteCategory
 };

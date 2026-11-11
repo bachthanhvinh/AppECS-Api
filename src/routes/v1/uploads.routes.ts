@@ -1,5 +1,5 @@
 import express from "express";
-import { generateSignature } from "../../controllers/upload.controllers";
+import { generateSignature } from "../../controllers/upload.controller";
 
 export const router = express.Router();
 

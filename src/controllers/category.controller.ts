@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { categoryService } from "../services/category.service";
 import ApiError from "../utils/apiError";
+import { StatusCodes } from "http-status-codes";
 
 const createCategory = async (
   req: Request,
@@ -95,6 +96,8 @@ const deleteCategory = async (
     next(error);
   }
 };
+
+
 export const categoryController = {
   createCategory,
   updateCategory,
