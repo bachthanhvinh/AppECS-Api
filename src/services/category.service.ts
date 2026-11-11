@@ -83,6 +83,7 @@ const deleteCategory = async (categoryId: string) => {
   }
   return await categoryModel.deleteCategory(categoryId);
 };
+
 export const categoryService = {
   createCategory,
   updateCategory,

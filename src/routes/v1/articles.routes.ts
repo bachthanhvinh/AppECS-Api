@@ -1,5 +1,5 @@
 import express from "express";
-import { articleController } from "../../controllers/article.controllers";
+import { articleController } from "../../controllers/article.controller";
 import { authMiddleware } from "../../middlewares/authMiddleware";
 import { adminMiddleware } from "../../middlewares/adminMiddleware";
 import { validate } from "../../middlewares/validation.middleware";

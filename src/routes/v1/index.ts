@@ -5,6 +5,7 @@ import { userRouter } from "./users.routes";
 import { articlesRouter } from "./articles.routes";
 import { authRouter } from "./auth.routes";
 import { uploadRouter } from "./uploads.routes";
+import { paginationRouter } from "./paginationRouter.routes";
 
 const router = express.Router();
 
@@ -15,4 +16,5 @@ router.use("/categories", categoriesRouter);
 router.use("/articles", articlesRouter);
 router.use("/auth", authRouter);
 router.use("/upload", uploadRouter);
+router.use("/pagination", paginationRouter)
 export const API_V1 = router;
